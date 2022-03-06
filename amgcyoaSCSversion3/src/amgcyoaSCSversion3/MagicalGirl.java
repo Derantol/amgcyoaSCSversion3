@@ -9,26 +9,11 @@ public class MagicalGirl {
 	//Max HP is derived from max Vitality; max WP is set at 2 by default.
 	//Evasion, defense, critical hit rate, critical bonus damage, and spell rating are all secondary stats.
 	//These are all derived from the primary stats, except for critical bonus damage, which is by default 50% bonus damage (x1.5)
-	int str;
-	int agi;
-	int vit;
-	int mag;
-	int luk;
-	int strMax;
-	int agiMax;
-	int vitMax;
-	int magMax;
-	int lukMax;
-	int strBase;
-	int agiBase;
-	int vitBase;
-	int magBase;
-	int lukBase;
-	int strBoost;
-	int agiBoost;
-	int vitBoost;
-	int magBoost;
-	int lukBoost;
+	Stat str;
+	Stat agi;
+	Stat vit;
+	Stat mag;
+	Stat luk;
 	int hp;
 	int hpMax;
 	int wp;
@@ -50,46 +35,37 @@ public class MagicalGirl {
 		setBaseStats(3, 3, 3, 3, 3);
 		setBoostStats(1, 1, 1, 1, 1);
 		wpMax = 2;
-		setCurrentStats(strMax, agiMax, vitMax, magMax, lukMax, hpMax, wpMax);
+		setCurrentStats(str.getMax(), agi.getMax(), vit.getMax(), mag.getMax(), luk.getMax(), hpMax, wpMax);
 	}
 	
 	//Sets each base stat to a new value, and then recalculates and sets max stats accordingly.
 	private void setBaseStats(int newStr, int newAgi, int newVit, int newMag, int newLuk) {
-		strBase = newStr;
-		agiBase = newAgi;
-		vitBase = newVit;
-		magBase = newMag;
-		lukBase = newLuk;
-		setMaxStats();
+		str.setBase(newStr);
+		agi.setBase(newAgi);
+		vit.setBase(newVit);
+		mag.setBase(newMag);
+		luk.setBase(newLuk);
+		hpMax = vit.getMax() * 10;
 	}
 
 	//Sets each boost stat to a new value, and then recalculates and sets max stats accordingly.
 	private void setBoostStats(int newStr, int newAgi, int newVit, int newMag, int newLuk) {
-		strBoost = newStr;
-		agiBoost = newAgi;
-		vitBoost = newVit;
-		magBoost = newMag;
-		lukBoost = newLuk;
-		setMaxStats();
+		str.setBoost(newStr);
+		agi.setBoost(newAgi);
+		vit.setBoost(newVit);
+		mag.setBoost(newMag);
+		luk.setBoost(newLuk);
+		hpMax = vit.getMax() * 10;
+
 	}
-	
-	//Sets each stat maximum to be equal to the stat base plus the stat boost; also calculates max HP.
-	private void setMaxStats() {
-		strMax = strBase + strBoost;
-		agiMax = agiBase + agiBoost;
-		vitMax = vitBase + vitBoost;
-		magMax = magBase + magBoost;
-		lukMax = lukBase + lukBoost;
-		hpMax = vitMax * 10;
-	}
-	
+		
 	//Used to set the current stat values to new ones; also recalculates all derived stats.
 	public void setCurrentStats(int newStr, int newAgi, int newVit, int newMag, int newLuk, int newHP, int newWP) {
-		str = newStr;
-		agi = newAgi;
-		vit = newVit;
-		mag = newMag;
-		luk = newLuk;
+		str.setCurrent(newStr);
+		agi.setCurrent(newAgi);
+		vit.setCurrent(newVit);
+		mag.setCurrent(newMag);
+		luk.setCurrent(newLuk);
 		hp = newHP;
 		wp = newWP;
 		
@@ -101,15 +77,15 @@ public class MagicalGirl {
 	}
 	
 	private void setEvasion() {
-		eva = (int) Math.floor((agi + luk) / 2.0);
+		eva = (int) Math.floor((agi.getCurrent() + luk.getCurrent()) / 2.0);
 	}
 	
 	private void setDefense() {
-		def = (int) Math.floor((str + vit) / 2.0);
+		def = (int) Math.floor((str.getCurrent() + vit.getCurrent()) / 2.0);
 	}
 	
 	private void setCriticalHitRate() {
-		critRate = luk * 2;
+		critRate = luk.getCurrent() * 2;
 	}
 	
 	private void setCriticalBonusDamage() {
@@ -117,12 +93,12 @@ public class MagicalGirl {
 	}
 	
 	private void setSpellRating() {
-		int[] stats = {str, agi, vit, mag, luk};
+		int[] stats = {str.getCurrent(), agi.getCurrent(), vit.getCurrent(), mag.getCurrent(), luk.getCurrent()};
 		int highestStat = 0;
 		for(int i = 0; i < 5; i++) {
 			highestStat = Math.max(highestStat, stats[i]);
 		}
-		spellRating = mag + highestStat;
+		spellRating = mag.getCurrent() + highestStat;
 	}
 	
 	//To-do: add getter methods
